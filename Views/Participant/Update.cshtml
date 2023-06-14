@@ -1,0 +1,40 @@
+﻿@model ParticipantViewModel
+
+@{
+	string description = "Osavõtja info";
+}
+
+<div class="container">
+	<partial name="_Grass" model="@description" />
+	<div class="row bg-white">
+		<div class="offset-lg-3 col-lg-6 ps-lg-5 offset-0 col-12">
+			@*<form method="post" asp-controller="Participant" asp-action="Update">*@
+				<div class="p-3 mt-4">
+					<div class="row">
+						<p class="create-header">Osavõtja info</p>
+					</div>
+					@if (Model.IsCompany)
+					{
+						<partial name="_CompanyForm" model="@Model" />
+					}
+					else
+					{
+						<partial name="_PersonForm" model="@Model" />
+					}
+					@*<div class="py-5">
+						<a asp-area="" asp-controller="Event" asp-action="Details" asp-route-id="@Model.EventId" class="btn btn-secondary">
+							Tagasi
+						</a>
+						<button type="submit" class="btn btn-primary">Salvesta</button>
+					</div>*@
+				</div>
+			@*</form>*@
+		</div>
+	</div>
+</div>
+
+@section Scripts{
+	@{
+		<partial name="_ValidationScriptsPartial" />
+	}
+}

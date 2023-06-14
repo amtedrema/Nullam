@@ -1,0 +1,222 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+  background-color: rgb(238, 242, 245);
+}
+
+header {
+  padding:1rem 0rem;
+}
+
+.symbol {
+    padding: 0.5rem 1.5rem;
+}
+
+.contacts-dark {
+    background-color: rgb(55,55,55);
+    color: rgb(210,210,210);
+    padding: 3.5rem 0rem 3.5rem 3.5rem;
+}
+
+.contacts-dark p {
+    margin-bottom:0.3rem;
+}
+
+.contacts-dark b {
+    margin-bottom: 0.3rem;
+}
+
+.logo {
+    padding-top:1rem;
+    padding-left:3rem;
+}
+
+.navbar-cust li:hover a {
+    color: #fff !important;
+    background-color: #005AA2;
+}
+
+.navbar-cust li {
+    list-style-type: none;
+    text-decoration:none;
+}
+
+.navbar-cust li a {
+    text-decoration: none;
+    font-size: 14px;
+    font-weight:bold;
+    float: left;
+    color: white;
+    text-align: center;
+    padding: 1.72rem 1.5rem;
+    list-style-type: none;
+    text-decoration:none;
+}
+
+.navbar-cust li:active a {
+    background-color: green;
+}
+
+.container {
+    margin-top:1rem;
+    margin-bottom:1rem;
+}
+
+.navbar {
+    padding-bottom:0rem;
+    padding-top:0rem;
+}
+
+.text-pos {
+    background-color: #005AA2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.text-pos p {
+    font-size: 24px;
+    color: #fff;
+}
+
+.landscape {
+    width: 100%;
+    max-height: 100%
+}
+
+.events-header {
+    background-color: #005AA2 !important;
+    text-align: center;
+    color: white;
+    font-size: 24px;
+    font-weight: 400;
+}
+
+.remove-image {
+    width: 16px;
+    height: auto;
+    margin-bottom:4px;
+}
+
+.remove-image:hover {
+    box-shadow: 0 0 1px 1px rgba(0, 90, 162, 0.5);
+}
+
+.text-gray {
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.text-gray a {
+    color: rgb(150,150,150);
+    text-decoration: none;
+}
+
+.text-gray button {
+    margin-top: -1px;
+    border: none;
+    color: rgb(150,150,150);
+    background-color: white;
+}
+
+tbody, td, tfoot, th, thead, tr {
+    border-style: hidden;
+}
+
+.img-libled {
+    height: 5rem;
+    width: 100%;
+    object-fit: cover;
+}
+
+.text-lible {
+    height: 5rem;
+    margin-bottom: 0px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+button.btn-primary {
+    background-color: #005AA2;
+    width: 5.5rem;
+    line-height: 1.1;
+}
+
+a.btn-secondary {
+    background-color: rgb(225,225,225);
+    border: none;
+    color: #000;
+    width: 5.5rem;
+    line-height: 1.1;
+}
+
+a.btn-secondary:hover {
+    background-color: rgb(200,200,200);
+    color: #000;
+}
+
+.create-header {
+    font-size: 1.8em;
+    color: #005AA2;
+}
+
+input:placeholder-shown {
+    font-style: italic;
+}
+
+form label {
+    font-weight:600;
+}
+
+.form-control,
+.form-select {
+    border-color: rgb(100,100,100)
+}
+
+textarea {
+    resize: none;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+.col-form-label {
+    font-weight: 600;
+}
+
+.td-width-14 {
+    max-width: 14rem;
+}
+
+.image-button {
+    padding: 0;
+    background-color: white;
+    border: none;
+}

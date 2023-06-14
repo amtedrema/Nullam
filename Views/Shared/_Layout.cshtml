@@ -1,0 +1,82 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nullam</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Nullam.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+</head>
+<body>
+    <div class="container bg-white navbar-cust">
+        <nav class="navbar navbar-expand-lg navbar-light ps-3">
+            <a class="navbar-brand">
+                <img src="~/images/logo.svg" />
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse offset-2" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active">
+                        <a class="text-dark nav-link" asp-area="" asp-controller="Event" asp-action="Index">AVALEHT</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="text-dark nav-link" asp-area="" asp-controller="Event" asp-action="Create">ÜRITUSE LISAMINE</a>
+                    </li>
+                </ul>
+            </div>
+
+            <a class="navbar-brand text-end">
+                <img src="~/images/symbol.svg" />
+            </a>
+        </nav>
+    </div>
+
+    <main role="main">
+        <partial name="_Notification" />
+        @RenderBody()
+    </main>
+
+
+    <div class="container contacts-dark">
+        <div class="row">
+            <div class="col-md-3 col-sm-6 col-12">
+                <h3>Curabitur</h3>
+                <p>Emauris</p>
+                <p>Kfringilla</p>
+                <p>Oin magna sem</p>
+                <p>Kelementum</p>
+            </div>
+            <div class="col-md-3 col-sm-6 col-12">
+                <h3>Fusce</h3>
+                <p>Econsectetur</p>
+                <p>Ksollicitudin</p>
+                <p>Omvulputate</p>
+                <p>Nunc fringilla tellu</p>
+            </div>
+            <div class="col-md-3 col-sm-6 col-12">
+                <h3>Kontakt</h3>
+                <b>Peakontor: Tallinnas</b>
+                <p>Väike Ameerika 1, 11415 Tallinn</p>
+                <p>Telefon: 605 4450</p>
+                <p>Faks: 605 3186</p>
+            </div>
+            <div class="col-md-3 col-sm-6 col-12">
+                <h3><br /></h3>
+                <b>Peakontor: Võrus</b>
+                <p>Oja tn 7 (külastusaadress)</p>
+                <p>Telefon: 605 3330</p>
+                <p>Faks: 605 3155</p>
+            </div>
+        </div>
+    </div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

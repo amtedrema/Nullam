@@ -1,0 +1,50 @@
+﻿@model ParticipantViewModel
+
+<form method="post" asp-controller="Participant" asp-action="AddOrUpdate">
+	<div class="row mb-2">
+		<label asp-for="FirstName" class="col-md-3 col-form-label">Eesnimi:</label>
+		<div class="col-md-9 ps-lg-5">
+			<input asp-for="FirstName" type="text" class="form-control">
+			<span asp-validation-for="FirstName" class="text-danger"></span>
+		</div>
+	</div>
+	<div class="row mb-2">
+		<label asp-for="LastName" class="col-md-3 col-form-label">Perekonnanimi:</label>
+		<div class="col-md-9 ps-lg-5">
+			<input asp-for="LastName" type="text" class="form-control">
+		</div>
+	</div>
+	<div class="row mb-2">
+		<label asp-for="IdCode" class="col-md-3 col-form-label">Isikukood:</label>
+		<div class="col-md-9 ps-lg-5">
+			<input asp-for="IdCode" type="number" class="form-control" maxlength="11" size="11">
+			<span asp-validation-for="IdCode" class="text-danger"></span>
+		</div>
+	</div>
+	<div class="row mb-2">
+		<label asp-for="PaymentMethodTypeId" class="col-md-3 col-form-label">Maksmisviis:</label>
+		<div class="col-md-9 ps-lg-5">
+			<select asp-for="PaymentMethodTypeId" class="form-select" asp-items="@(List<SelectListItem>)ViewBag.PaymentMethodTypeList">
+				<option selected></option>
+			</select>
+		</div>
+	</div>
+	<div class="row mb-2">
+		<label asp-for="Info" class="col-md-3 col-form-label">Lisainfo:</label>
+		<div class="col-md-9 ps-lg-5">
+			<textarea asp-for="Info" class="form-control" rows="2" maxlength="1500"></textarea>
+		</div>
+		<span asp-validation-for="Info" class="text-danger"></span>
+	</div>
+
+	@Html.HiddenFor(m => m.IsCompany)
+	@Html.HiddenFor(m => m.EventId)
+
+	<div class="py-5">
+		<a asp-area="" asp-controller="Event" asp-action="Details" asp-route-id="@Model.EventId" class="btn btn-secondary">
+			Tagasi
+		</a>
+		<button type="submit" class="btn btn-primary">Salvesta</button>
+	</div>
+
+</form>

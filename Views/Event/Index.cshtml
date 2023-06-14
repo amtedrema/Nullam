@@ -1,0 +1,80 @@
+﻿@model EventsByDateViewModel
+
+<div class="container">
+    <div class="row">
+        <div class="text-pos col-lg-6">
+            <p class="p-3">
+                Sed nec elit vestibulum, <strong>tincidunt orci</strong> et, sagittis ex. Vestibulum
+                rutrum <strong>neque suscipit</strong> ante mattis maximus. Nulla non sapien <strong>viverra, lobortis loerm non</strong>, accumsan metus.
+            </p>
+        </div>
+        <div class="col-lg-6 p-0">
+            <img class="landscape img-fluid" src="~/images/pilt.jpg" />
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row row-cols-1 row-cols-lg-2">
+        <div class="col px-0">
+            <div class="bg-white h-100">
+                <table class="table">
+                    <tr>
+                        <th class="events-header pb-3" colspan="4">Tulevased üritused</th>
+                    </tr>
+                    @for (var i = 0; i < Model.FutureEvents.Count(); i++)
+                    {
+                        <tr>
+                            <td class="ps-4">
+                                @(i + 1). @Html.DisplayFor(modelItem => Model.FutureEvents[i].Name)
+                            </td>
+                            <td class="text-end pe-4">
+                                @Html.DisplayFor(modelItem => Model.FutureEvents[i].OccurrenceTime)
+                            </td>
+                            <td class="text-end text-gray">
+                                <a asp-area="" asp-controller="Event" asp-action="Details" asp-route-id="@Model.FutureEvents[i].Id">OSAVÕTJAD</a>
+                            </td>
+                            <td class="pe-4">
+                                <form method="post" asp-action="Delete">
+                                    <input name="Id" value="@Model.FutureEvents[i].Id" hidden />
+                                    <button type="submit" class="image-button"><img src="~/images/remove.svg" class="remove-image" /></button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </table>
+                <div class="p-4 text-gray">
+                    <a asp-area="" asp-controller="Event" asp-action="Create">
+                        LISA ÜRITUS
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col pe-0 ps-0 ps-lg-3 pt-3 pt-lg-0">
+            <div class="bg-white h-100">
+                <table class="table">
+                    <tr>
+                        <th class="events-header" colspan="3">Toimunud üritused</th>
+                    </tr>
+                    @for (var i = 0; i < Model.PastEvents.Count(); i++)
+                    {
+                        <tr>
+                            <td class="ps-4">
+                                @(i + 1). @Html.DisplayFor(modelItem => Model.PastEvents[i].Name)
+                            </td>
+                            <td class="text-end pe-4">
+                                @Html.DisplayFor(modelItem => Model.PastEvents[i].OccurrenceTime)
+                            </td>
+                            <td class="text-end text-gray pe-4">
+                                <a asp-area="" asp-controller="Event" asp-action="Details" asp-route-id="@Model.PastEvents[i].Id">OSAVÕTJAD</a>
+                            </td>
+                        </tr>
+                    }
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+

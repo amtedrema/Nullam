@@ -1,0 +1,59 @@
+﻿@model Event
+
+@{
+	string description = "Ürituse lisamine";
+}
+
+<div class="container">
+	<partial name="_Grass" model="@description" />
+	<div class="row bg-white">
+		<div class="offset-lg-3 col-lg-6 ps-lg-5 offset-0 col-12">
+			<form method="post" asp-controller="Event" asp-action="Create">
+				<div class="p-3 mt-4">
+					<div class="row">
+						<p class="create-header">Ürituse lisamine</p>
+					</div>
+					<div class="row mb-2">
+						<label asp-for="Name" class="col-sm-3 col-form-label">Ürituse nimi:</label>
+						<div class="col-sm-9 ps-lg-5">
+							<input asp-for="Name" type="text" class="form-control">
+							<span asp-validation-for="Name" class="text-danger"></span>
+						</div>
+					</div>
+					<div class="row mb-2">
+						<label asp-for="OccurrenceTime" class="col-sm-3 col-form-label">Toimumisaeg:</label>
+						<div class="col-sm-9 ps-lg-5">
+							<input asp-for="OccurrenceTime" type="datetime" class="form-control" placeholder="kk.pp.aaaa HH:mm">
+							<span asp-validation-for="OccurrenceTime" class="text-danger"></span>
+						</div>
+					</div>
+					<div class="row mb-2">
+						<label asp-for="Place" class="col-sm-3 col-form-label">Koht:</label>
+						<div class="col-sm-9 ps-lg-5">
+							<input asp-for="Place" type="text" class="form-control">
+							<span asp-validation-for="Place" class="text-danger"></span>
+						</div>
+					</div>
+					<div class="row mb-2">
+						<label asp-for="Info" class="col-sm-3 col-form-label">Lisainfo:</label>
+						<div class="col-sm-9 ps-lg-5">
+							<textarea asp-for="Info" class="form-control" rows="2" maxlength="1000"></textarea>
+						</div>
+					</div>
+					<div class="py-5">
+						<a asp-controller="Event" asp-action="Index" class="btn btn-secondary">
+							Tagasi
+						</a>
+						<button type="submit" class="btn btn-primary">Lisa</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+@section Scripts{
+	@{
+		<partial name="_ValidationScriptsPartial" />
+	}
+}
