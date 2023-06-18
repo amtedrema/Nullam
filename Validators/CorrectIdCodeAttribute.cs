@@ -7,51 +7,49 @@ namespace Nullam.Validators
 	{
 		public override bool IsValid(object? value)
 		{
-			if(value != null)
-			{
-				string s = JsonConvert.SerializeObject(value);
-				return ValidateIdCode(s);
-			}
-			else
+			if (value == null)
 				return false;
+
+			string serializedValue = JsonConvert.SerializeObject(value);
+			return ValidateIdCode(serializedValue);
 		}
 
-		private static bool ValidateIdCode(string code)
+		private static bool ValidateIdCode(string value)
 		{
 			var multiplier1 = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 1 };
 			var multiplier2 = new int[] { 3, 4, 5, 6, 7, 8, 9, 1, 2, 3 };
 
-			var codeArray = code.ToCharArray();
+			int[] codeArray = value.Select(x => int.Parse(x.ToString())).ToArray();
 
-			var control = Convert.ToInt32(char.GetNumericValue(codeArray[10]));
+			var check = codeArray[10];
 			var total = 0;
 
-			/* Do the first run. */
+			// Do the first run.
 			for (int i = 0; i < 10; i++)
 			{
-				total += Convert.ToInt32(char.GetNumericValue(codeArray[i])) * multiplier1[i];
+				total += codeArray[i] * multiplier1[i];
 			}
 
 			int mod = total % 11;
 
-			/* If modulus is ten we need a second run. */
-			total = 0;
-			if (10 == mod)
+			// If modulus is ten we need a second run.
+			if (mod == 10)
 			{
+				total = 0;
 				for (int i = 0; i < 10; i++)
 				{
-					total += code[i] * multiplier2[i];
+					total += codeArray[i] * multiplier2[i];
 				}
 				mod = total % 11;
 
-				/* If modulus is still ten revert to 0. */
-				if (10 == mod)
+				// If modulus is still ten revert to 0.
+				if (mod == 10)
 				{
 					mod = 0;
 				}
 			}
 
-			return control == mod;
+			return check == mod;
 		}
 	}
 }

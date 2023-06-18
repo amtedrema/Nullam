@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Nullam.Data;
+using System.Globalization;
 
 namespace Nullam
 {
@@ -15,6 +16,9 @@ namespace Nullam
             builder.Services.AddDbContext<NullamDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("AppDatabase")));
 
+            CultureInfo estonianCulture = new CultureInfo("et-EE");
+            CultureInfo.DefaultThreadCurrentCulture = estonianCulture;
+            CultureInfo.DefaultThreadCurrentUICulture = estonianCulture;
 
             var app = builder.Build();
 

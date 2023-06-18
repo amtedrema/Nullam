@@ -13,7 +13,15 @@ public class NullamDbContext : DbContext
 
     protected override void OnModelCreating (ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Company>()
+		modelBuilder.Entity<Person>()
+		    .HasIndex(u => u.IdCode)
+		    .IsUnique();
+
+		modelBuilder.Entity<Company>()
+			.HasIndex(u => u.RegistrationCode)
+			.IsUnique();
+
+		modelBuilder.Entity<Company>()
             .HasOne(v => v.PaymentMethodType)
             .WithMany()
             .HasForeignKey(v => v.PaymentMethodTypeId);
@@ -125,44 +133,44 @@ public class NullamDbContext : DbContext
                 Info = "Alexandrum Magnum reges sunt appellati, ex hoc facillime potest iudicari, quod nemo Eumene vivo rex appellatus"
             });
 
-            modelBuilder.Entity<Company>()
-                .HasMany(p => p.Events)
-                .WithMany(t => t.Companies)
-                .UsingEntity<Dictionary<string, object>>(
-                    "EventCompany",
-                    r => r.HasOne<Event>().WithMany().HasForeignKey("EventId"),
-                    l => l.HasOne<Company>().WithMany().HasForeignKey("CompanyId"),
-                    je =>
-                    {
-                        je.HasKey("EventId", "CompanyId");
-                        je.HasData(
-                            new { EventId = eventId1, CompanyId = companyId1 },
-                            new { EventId = eventId2, CompanyId = companyId2 },
-                            new { EventId = eventId3, CompanyId = companyId1 },
-                            new { EventId = eventId4, CompanyId = companyId2 },
-                            new { EventId = eventId5, CompanyId = companyId1 },
-			                new { EventId = eventId5, CompanyId = companyId2 });
-                    });
+        modelBuilder.Entity<Company>()
+            .HasMany(p => p.Events)
+            .WithMany(t => t.Companies)
+            .UsingEntity<Dictionary<string, object>>(
+                "EventCompany",
+                r => r.HasOne<Event>().WithMany().HasForeignKey("EventId"),
+                l => l.HasOne<Company>().WithMany().HasForeignKey("CompanyId"),
+                je =>
+                {
+                    je.HasKey("EventId", "CompanyId");
+                    je.HasData(
+                        new { EventId = eventId1, CompanyId = companyId1 },
+                        new { EventId = eventId2, CompanyId = companyId2 },
+                        new { EventId = eventId3, CompanyId = companyId1 },
+                        new { EventId = eventId4, CompanyId = companyId2 },
+                        new { EventId = eventId5, CompanyId = companyId1 },
+			            new { EventId = eventId5, CompanyId = companyId2 });
+                });
 
-		    modelBuilder.Entity<Person>()
-			    .HasMany(p => p.Events)
-			    .WithMany(t => t.Persons)
-			    .UsingEntity<Dictionary<string, object>>(
-				    "EventPerson",
-				    r => r.HasOne<Event>().WithMany().HasForeignKey("EventId"),
-				    l => l.HasOne<Person>().WithMany().HasForeignKey("PersonId"),
-				    je =>
-				    {
-					    je.HasKey("EventId", "PersonId");
-					    je.HasData(
-						    new { EventId = eventId1, PersonId = personId1 },
-						    new { EventId = eventId1, PersonId = personId2 },
-						    new { EventId = eventId2, PersonId = personId2 },
-						    new { EventId = eventId3, PersonId = personId1 },
-						    new { EventId = eventId4, PersonId = personId1 },
-						    new { EventId = eventId5, PersonId = personId1 },
-						    new { EventId = eventId5, PersonId = personId2 });
-				    });
+		modelBuilder.Entity<Person>()
+			.HasMany(p => p.Events)
+			.WithMany(t => t.Persons)
+			.UsingEntity<Dictionary<string, object>>(
+				"EventPerson",
+				r => r.HasOne<Event>().WithMany().HasForeignKey("EventId"),
+				l => l.HasOne<Person>().WithMany().HasForeignKey("PersonId"),
+				je =>
+				{
+					je.HasKey("EventId", "PersonId");
+					je.HasData(
+						new { EventId = eventId1, PersonId = personId1 },
+						new { EventId = eventId1, PersonId = personId2 },
+						new { EventId = eventId2, PersonId = personId2 },
+						new { EventId = eventId3, PersonId = personId1 },
+						new { EventId = eventId4, PersonId = personId1 },
+						new { EventId = eventId5, PersonId = personId1 },
+						new { EventId = eventId5, PersonId = personId2 });
+				});
 	}
 }
 

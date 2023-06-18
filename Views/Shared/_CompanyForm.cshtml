@@ -1,38 +1,42 @@
 ﻿@model ParticipantViewModel
 
 <div class="row mb-2">
-	<label asp-for="Name" class="col-md-3 col-form-label">Juriidiline nimi:</label>
+	<label asp-for="Company.Name" class="col-md-3 col-form-label">Juriidiline nimi:</label>
 	<div class="col-md-9 ps-lg-5">
-		<input asp-for="Name" type="text" class="form-control">
+		<input asp-for="Company.Name" type="text" class="form-control">
+		<span asp-validation-for="Company.Name" class="text-danger"></span>
 	</div>
 </div>
 <div class="row mb-2">
-	<label asp-for="RegistrationCode" class="col-md-3 col-form-label">Registrikood:</label>
+	<label asp-for="Company.RegistrationCode" class="col-md-3 col-form-label">Registrikood:</label>
 	<div class="col-md-9 ps-lg-5">
-		<input asp-for="RegistrationCode" type="number" class="form-control">
+		<input asp-for="Company.RegistrationCode" type="number" class="form-control">
+		<span asp-validation-for="Company.RegistrationCode" class="text-danger"></span>
 	</div>
 </div>
 <div class="row mb-2">
-	<label asp-for="ParticipantAmount" class="col-md-3 col-form-label">Osavõtjate arv:</label>
+	<label asp-for="Company.ParticipantAmount" class="col-md-3 col-form-label">Osavõtjate arv:</label>
 	<div class="col-md-9 ps-lg-5">
-		<input asp-for="ParticipantAmount" type="number" class="form-control">
+		<input asp-for="Company.ParticipantAmount" type="number" class="form-control">
 	</div>
 </div>
 <div class="row mb-2">
-	<label asp-for="PaymentMethodTypeId" class="col-md-3 col-form-label">Maksmisviis:</label>
+	<label asp-for="Company.PaymentMethodTypeId" class="col-md-3 col-form-label">Maksmisviis:</label>
 	<div class="col-md-9 ps-lg-5">
-		<select asp-for="PaymentMethodTypeId" class="form-select" asp-items="@(List<SelectListItem>)ViewBag.PaymentMethodTypeList">
+		<select asp-for="Company.PaymentMethodTypeId" class="form-select" asp-items="@(List<SelectListItem>)ViewBag.PaymentMethodTypeList">
 			<option selected></option>
 		</select>
+		<span asp-validation-for="Company.PaymentMethodTypeId" class="text-danger"></span>
 	</div>
 </div>
 <div class="row mb-2">
-	<label asp-for="Info" class="col-md-3 col-form-label">Lisainfo:</label>
+	<label asp-for="Company.Info" class="col-md-3 col-form-label">Lisainfo:</label>
 	<div class="col-md-9 ps-lg-5">
-		<textarea asp-for="Info" class="form-control" rows="2" maxlength="5000"></textarea>
+		<textarea asp-for="Company.Info" class="form-control" rows="2" maxlength="5000"></textarea>
 	</div>
-	<span asp-validation-for="Info" class="text-danger"></span>
+	<span asp-validation-for="Company.Info" class="text-danger"></span>
 </div>
 
+@Html.HiddenFor(m => m.Company.Id)
 @Html.HiddenFor(m => m.IsCompany)
 @Html.HiddenFor(m => m.EventId)

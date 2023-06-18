@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using Nullam.Data;
 using Nullam.Models;
 using Nullam.ViewModels;
@@ -45,15 +46,18 @@ namespace Nullam.Controllers
 			var person = _context.Person.FirstOrDefault(x => x.Id == id);
 			if (person != null)
 			{
+
 				return new ParticipantViewModel
 				{
-					Id = person.Id,
-					FirstName = person.FirstName,
-					LastName = person.LastName,
-					IdCode = person.IdCode,
-					PaymentMethodTypeId = person.PaymentMethodTypeId,
-					Info = person.Info,
-					IsCompany = false
+					IsCompany = false,
+					Person = new Person {
+						Id = person.Id,
+						FirstName = person.FirstName,
+						LastName = person.LastName,
+						IdCode = person.IdCode,
+						PaymentMethodTypeId = person.PaymentMethodTypeId,
+						Info = person.Info,
+					}
 				};
 			}
 
@@ -62,53 +66,58 @@ namespace Nullam.Controllers
 			{
 				return new ParticipantViewModel
 				{
-					Id = company.Id,
-					Name = company.Name,
-					RegistrationCode = company.RegistrationCode,
-					ParticipantAmount = company.ParticipantAmount,
-					PaymentMethodTypeId = company.PaymentMethodTypeId,
-					Info = company.Info,
-					IsCompany = true
+					IsCompany = true,
+					Company = new Company
+					{
+						Id = company.Id,
+						Name = company.Name,
+						RegistrationCode = company.RegistrationCode,
+						ParticipantAmount = company.ParticipantAmount,
+						PaymentMethodTypeId = company.PaymentMethodTypeId,
+						Info = company.Info,
+					},					
 				};
 			}
 
             return null;
         }
 
-        [HttpPost]
+		[HttpPost]
 		[ValidateAntiForgeryToken]
 		public IActionResult Update(ParticipantViewModel participantVM)
-        {
-			if (ModelState.IsValid)
+		{
+			// Person FirstName and IdCode (2 validations) properties give InValid, because our participant is Company.
+			if (participantVM.IsCompany && ModelState.ErrorCount == 3)
 			{
-				if (participantVM.IsCompany)
-				{
-                    var existingCompany = _context.Company.Where(x => x.Id == participantVM.Id).First();
-					existingCompany.Name = participantVM.Name ?? "";
-					existingCompany.RegistrationCode = participantVM.RegistrationCode ?? -1;
-					existingCompany.ParticipantAmount = participantVM.ParticipantAmount ?? 0;
-					existingCompany.PaymentMethodTypeId = participantVM.PaymentMethodTypeId;
-					existingCompany.Info = participantVM.Info;
+				var existingCompany = _context.Company.Where(x => x.Id == participantVM.Company.Id).First();
+				existingCompany.Name = participantVM.Company.Name;
+				existingCompany.RegistrationCode = participantVM.Company.RegistrationCode;
+				existingCompany.ParticipantAmount = participantVM.Company.ParticipantAmount;
+				existingCompany.PaymentMethodTypeId = participantVM.Company.PaymentMethodTypeId;
+				existingCompany.Info = participantVM.Company.Info;
 
-                    _context.Company.Update(existingCompany);
-                }
-				else
-				{
-                    var existingPerson = _context.Person.Where(x => x.Id == participantVM.Id).First();
+				_context.Company.Update(existingCompany); 
+				_context.SaveChanges();
+				TempData["success"] = "Osaleja info muutmine õnnestus edukalt";
 
-                    existingPerson.FirstName = participantVM.FirstName ?? "";
-                    existingPerson.LastName = participantVM.LastName ?? "";
-                    existingPerson.IdCode = participantVM.IdCode ?? -1;
-                    existingPerson.PaymentMethodTypeId = participantVM.PaymentMethodTypeId;
-                    existingPerson.Info = participantVM.Info;
+				return RedirectToAction("Details", "Event", new { id = participantVM.EventId });
+			}
+			// Company Name, ParticipantAmount and RegistrationCode properties give InValid, because our participant is Person.
+			else if (!participantVM.IsCompany && ModelState.ErrorCount == 3)
+			{
+				var existingPerson = _context.Person.Where(x => x.Id == participantVM.Person.Id).First();
 
-                    _context.Person.Update(existingPerson);
-                }
+				existingPerson.FirstName = participantVM.Person.FirstName;
+				existingPerson.LastName = participantVM.Person.LastName;
+				existingPerson.IdCode = participantVM.Person.IdCode;
+				existingPerson.PaymentMethodTypeId = participantVM.Person.PaymentMethodTypeId;
+				existingPerson.Info = participantVM.Person.Info;
 
-                _context.SaveChanges();
-                TempData["success"] = "Osaleja info muutmine õnnestus edukalt";
+				_context.Person.Update(existingPerson);
+				_context.SaveChanges();
+				TempData["success"] = "Osaleja info muutmine õnnestus edukalt";
 
-                return RedirectToAction("Details", "Event", new { id = participantVM.EventId });
+				return RedirectToAction("Details", "Event", new { id = participantVM.EventId });
 			}
 
 			var selectedList = _context.PaymentMethodType.Select(a =>
@@ -121,27 +130,11 @@ namespace Nullam.Controllers
 			ViewBag.PaymentMethodTypeList = selectedList;
 
 			return View(participantVM);
-        }
-
-        public IActionResult PersonForm()
-		{
-            var participantVM = new ParticipantViewModel { IsCompany = false };
-            var selectedList = _context.PaymentMethodType.Select(a =>
-								  new SelectListItem
-								  {
-									  Value = a.Id.ToString(),
-									  Text = a.LabelText
-								  }).ToList();
-
-			ViewBag.PaymentMethodTypeList = selectedList;
-
-            return PartialView("_PersonForm", participantVM);
 		}
 
-		public IActionResult CompanyForm()
+		[HttpPost]
+		public IActionResult NewParticipantForm(string modelJson)
 		{
-			var participantVM = new ParticipantViewModel {	IsCompany = true };
-
 			var selectedList = _context.PaymentMethodType.Select(a =>
 							  new SelectListItem
 							  {
@@ -151,101 +144,13 @@ namespace Nullam.Controllers
 
 			ViewBag.PaymentMethodTypeList = selectedList;
 
-            return PartialView("_CompanyForm", participantVM);
+			var model = JsonConvert.DeserializeObject<ParticipantViewModel>(modelJson);
+
+			if (model != null && model.IsCompany)
+				return PartialView("_CompanyForm", model);
+
+			return PartialView("_PersonForm", model);
 		}
-
-        [HttpPost]
-		[ValidateAntiForgeryToken]
-		public IActionResult Create(ParticipantViewModel participantVM)
-		{
-            string? eventId = null;
-            if (TempData.ContainsKey("eventId"))
-            {
-                eventId = TempData["eventId"]?.ToString();
-            }
-
-            if ((!participantVM.IsCompany && ModelState.ErrorCount == 2) || (participantVM.IsCompany && ModelState.ErrorCount == 3))
-			{
-				Event eventMap;
-				if (eventId != null)
-				{
-					eventMap = _context.Event.First(x => x.Id.ToString() == eventId);
-				}
-				else
-				{
-					TempData["error"] = "Ei leia üles üritust millega osalejat siduda";
-					return RedirectToAction("Index", "Event");
-				}
-
-				if (participantVM.IsCompany)
-				{
-					var existingCompany = _context.Company.Include(x => x.Events).Where(x => x.RegistrationCode == participantVM.RegistrationCode).FirstOrDefault();
-					if (existingCompany == null)
-					{
-						var newCompany = new Company
-						{
-							Name = participantVM.Name ?? "",
-							ParticipantAmount = participantVM.ParticipantAmount ?? -1,
-							RegistrationCode = participantVM.RegistrationCode ?? -1,
-							PaymentMethodTypeId = participantVM.PaymentMethodTypeId,
-							CreatedDate = DateTime.UtcNow,
-							Info = participantVM.Info,
-							Events = new List<Event>()
-						};
-
-						newCompany.Events.Add(eventMap);
-						_context.Company.Add(newCompany);
-					}
-					else if (existingCompany.Events != null && existingCompany.Events.All(x => x.Id != eventMap.Id))
-					{
-						existingCompany.Events.Add(eventMap);
-						_context.Company.Update(existingCompany);
-					}
-					else
-					{
-						TempData["error"] = "Ettevõte registrikoodiga '" + existingCompany.RegistrationCode + "' on juba registreerinud";
-						return RedirectToAction("Details", "Event", new { id = eventId });
-					}
-				}
-				else
-				{
-					var existingPerson = _context.Person.Include(x => x.Events).Where(y => y.IdCode == participantVM.IdCode).FirstOrDefault();
-					if (existingPerson == null)
-					{
-						var newPerson = new Person
-						{
-							FirstName = participantVM.FirstName ?? "",
-							LastName = participantVM.LastName ?? "",
-							IdCode = participantVM.IdCode ?? -1,
-							PaymentMethodTypeId = participantVM.PaymentMethodTypeId,
-							CreatedDate = DateTime.UtcNow,
-							Info = participantVM.Info,
-							Events = new List<Event>()
-						};
-
-						newPerson.Events.Add(eventMap);
-						_context.Person.Add(newPerson);
-					}
-					else if (existingPerson.Events != null && existingPerson.Events.All(x => x.Id != eventMap.Id))
-					{
-						existingPerson.Events.Add(eventMap);
-						_context.Person.Update(existingPerson);
-					}
-					else
-					{
-						TempData["error"] = "Osaleja isikukoodiga '" + existingPerson.IdCode + "' on end juba registreerinud";
-						return RedirectToAction("Details", "Event", new { id = eventId });
-					}
-				}
-
-				_context.SaveChanges();
-				TempData["success"] = "Osaleja lisamine õnnestus edukalt";
-                return RedirectToAction("Details", "Event", new { id = eventId });
-            }
-
-            TempData["error"] = "Osaleja lisamine ebaõnnestus";
-            return RedirectToAction("Details", "Event", new { id = eventId });
-        }
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]

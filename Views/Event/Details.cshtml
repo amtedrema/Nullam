@@ -51,7 +51,7 @@
 										@Html.DisplayFor(modelItem => Model.Participants[i].Code)
 									</td>
 									<td class="text-center text-gray">
-										<a asp-area="" asp-controller="Participant" asp-action="Update" asp-route-id="@Model.Participants[i].Id">VAATA</a>
+										<a asp-area="" asp-controller="Participant" asp-action="Update" asp-route-id="@Model.Participants[i].Id" >VAATA</a>
 									</td>
 									<td class="pe-4 text-gray">
 										<form method="post" asp-controller="Participant"  asp-action="Delete">
@@ -68,33 +68,32 @@
 		</div>
 		<div class="offset-lg-3 col-lg-6 ps-lg-5 offset-0 col-12">
 			<div class="p-3 mb-4">
-				@*<form method="post" asp-controller="Participant" asp-action="Create">*@
-					<div class="row">
-						<p class="create-header">Osavõtjate lisamine</p>
-					</div>
-					<div class="row mb-2">
-						<label class="col-md-3 col-form-label invisible"></label>
-						<div class="col-md-9 ps-lg-5">
-							<div class="form-check form-check-inline me-5">
-								<input class="form-check-input" type="radio" name="group" value="false" checked>
-								<label class="form-check-label">Eraisik</label>
-							</div>
-							<div class="form-check form-check-inline ms-4">
-								<input class="form-check-input" type="radio" name="group" value="true">
-								<label class="form-check-label">Ettevõte</label>
-							</div>
+				<div class="row">
+					<p class="create-header">Osavõtjate lisamine</p>
+				</div>
+				<div class="row mb-2">
+					<label class="col-md-3 col-form-label invisible"></label>
+					<div class="col-md-9 ps-lg-5">
+						<div class="form-check form-check-inline me-5">
+							<input class="form-check-input" type="radio" name="group" value="person" checked>
+							<label class="form-check-label">Eraisik</label>
+						</div>
+						<div class="form-check form-check-inline ms-4">
+							<input class="form-check-input" type="radio" name="group" value="company">
+							<label class="form-check-label">Ettevõte</label>
 						</div>
 					</div>
-					
+				</div>
+				<form method="post" asp-controller="Event" asp-action="CreateParticipant">
 					<div id="participant_form"></div>
 
-					@*<div class="py-5">
+					<div class="py-5">
 						<a asp-controller="Event" asp-action="Index" class="btn btn-secondary">
 							Tagasi
 						</a>
 						<button type="submit" class="btn btn-primary">Salvesta</button>
-					</div>*@
-				@*</form>*@
+					</div>
+				</form>
 			</div>
 		</div>
 	</div>
@@ -106,15 +105,37 @@
 
 	<script>
 		$(document).ready(function () {
-			$('#participant_form').load('/Participant/PersonForm');
-		});
+			loadPartialView();
 
-		$('input:radio[name=group]').change(function () {
-			var url = '/Participant/PersonForm';
-			if ($(this).val() === 'true') {
-				url = '/Participant/CompanyForm';
-			}
-			$("#participant_form").load(url);
+			$('input:radio[name=group]').change(function () {
+				loadPartialView();
+			});
+
+			function loadPartialView() {
+
+				var serializedModel = @Json.Serialize(@Model.NewParticipant);
+				serializedModel.IsCompany = false;
+
+				if ($('input:radio[name=group]:checked').val() === 'company') {
+					serializedModel.IsCompany = true;
+				}
+
+				var modelJsonData = JSON.stringify(serializedModel);
+
+				$.ajax({
+					url: '/Participant/NewParticipantForm',
+					type: 'POST',
+					data: { modelJson: modelJsonData },
+					success: function (result) {
+						$('#participant_form').html(result);
+					}
+				}).then(function () {
+					$("form").each(function () { 
+						$.data($(this)[0], 'validator', false); 
+					});
+					$.validator.unobtrusive.parse("form");
+				});
+			};
 		});
 	</script>
 }

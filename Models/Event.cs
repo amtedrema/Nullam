@@ -10,7 +10,7 @@ namespace Nullam.Models
 		[Required(ErrorMessage = "Palun sisestage ürituse nimi")]
 		public required string Name { get; set; }
 
-		[DisplayFormat(DataFormatString = "{0:dd.MM.yyyy}")]
+        [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy HH:mm}")]
 		[Required(ErrorMessage = "Palun sisestage toimumisaeg ettenäidatud formaadis")]
 		[FutureDate(ErrorMessage = "Kuupäev peab olema tulevikus")]
 		public DateTime OccurrenceTime { get; set; }

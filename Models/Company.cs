@@ -1,9 +1,17 @@
-﻿namespace Nullam.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Nullam.Models
 {
 	public class Company : ParticipantBase
 	{
+		[Required(ErrorMessage = "Palun sisestage ettevõtte nimi")]
 		public required string Name { get; set; }
-		public int ParticipantAmount { get; set; }
-		public double RegistrationCode { get; set; }
+		[Required(ErrorMessage = "Palun sisestage osalejate arv")]
+		public int? ParticipantAmount { get; set; }
+		[Required(ErrorMessage = "Palun sisestage registrikood")]
+		public double? RegistrationCode { get; set; }
+
+		[StringLength(5000, ErrorMessage = "Lisainfo väli ei saa sisaldada rohkem kui 5000 tähte")]
+		public string? Info { get; set; }
 	}
 }
