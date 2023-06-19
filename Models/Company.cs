@@ -7,7 +7,8 @@ namespace Nullam.Models
 		[Required(ErrorMessage = "Palun sisestage ettevõtte nimi")]
 		public required string Name { get; set; }
 		[Required(ErrorMessage = "Palun sisestage osalejate arv")]
-		public int? ParticipantAmount { get; set; }
+        [Range(1, int.MaxValue, ErrorMessage = "Osalejate arv algab ühest inimesest")]
+        public int? ParticipantAmount { get; set; }
 		[Required(ErrorMessage = "Palun sisestage registrikood")]
 		public double? RegistrationCode { get; set; }
 

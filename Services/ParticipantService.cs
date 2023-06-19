@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Nullam.Data;
 using Nullam.Models;
 using Nullam.ViewModels;
-using Services;
 
 namespace Nullam.Services
 {
@@ -70,6 +69,104 @@ namespace Nullam.Services
             }
 
             return null;
+        }
+
+        public bool CreateParticipant(ParticipantViewModel participantVM)
+        {
+            //eventMap is for mapping the person with an event
+            var eventMap = _context.Event
+                .Include(x => x.Companies)
+                .Include(y => y.Persons)
+                .FirstOrDefault(x => x.Id.ToString() == participantVM.EventId);
+
+            if (eventMap == null)
+            {
+                // Event not found
+                return false;
+            }
+
+            if (participantVM.IsCompany)
+            {
+                // RegistrationCode is unique
+                var existingCompany = _context.Company
+                    .Include(x => x.Events)
+                    .FirstOrDefault(y => y.RegistrationCode == participantVM.Company.RegistrationCode);
+
+                if (existingCompany == null)
+                {
+                    //Create a new Company
+                    var newCompany = new Company
+                    {
+                        Name = participantVM.Company.Name,
+                        ParticipantAmount = participantVM.Company.ParticipantAmount,
+                        RegistrationCode = participantVM.Company.RegistrationCode,
+                        PaymentMethodTypeId = participantVM.Company.PaymentMethodTypeId,
+                        CreatedDate = DateTime.UtcNow,
+                        Info = participantVM.Company.Info,
+                        Events = new List<Event> { eventMap }
+                    };
+
+                    _context.Company.Add(newCompany);
+                    _context.SaveChanges();
+
+                    return true;
+                }
+                else if (existingCompany.Events != null && existingCompany.Events.All(x => x.Id != eventMap.Id))
+                {
+                    // If the Company already exists in the database but hasn't participated in the event
+                    existingCompany.Events.Add(eventMap);
+                    _context.Company.Update(existingCompany);
+                    _context.SaveChanges();
+
+                    return true;
+                }
+                else
+                {
+                    // Company already registered for the event
+                    return false;
+                }
+            }
+            else
+            {
+                //Idcode is unique
+                var existingPerson = _context.Person
+                    .Include(x => x.Events)
+                    .FirstOrDefault(y => y.IdCode == participantVM.Person.IdCode);
+
+                if (existingPerson == null)
+                {
+                    // Create a new Person
+                    var newPerson = new Person
+                    {
+                        FirstName = participantVM.Person.FirstName,
+                        LastName = participantVM.Person.LastName,
+                        IdCode = participantVM.Person.IdCode,
+                        PaymentMethodTypeId = participantVM.Person.PaymentMethodTypeId,
+                        CreatedDate = DateTime.UtcNow,
+                        Info = participantVM.Person.Info,
+                        Events = new List<Event> { eventMap }
+                    };
+
+                    _context.Person.Add(newPerson);
+                    _context.SaveChanges();
+
+                    return true;
+                }
+                else if (existingPerson.Events != null && existingPerson.Events.All(x => x.Id != eventMap.Id))
+                {
+                    // If the Person already exists in the database but hasn't participated in the event
+                    existingPerson.Events.Add(eventMap);
+                    _context.Person.Update(existingPerson);
+                    _context.SaveChanges();
+
+                    return true;
+                }
+                else
+                {
+                    // Person already registered for the event
+                    return false;
+                }
+            }
         }
 
         public void UpdateParticipant(ParticipantViewModel participantVM)

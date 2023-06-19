@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Nullam.Services;
 using Nullam.ViewModels;
-using Services;
 
 namespace Nullam.Controllers
 {

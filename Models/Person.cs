@@ -10,7 +10,7 @@ namespace Nullam.Models
 		public string? LastName { get; set; }
 
 		[Required(ErrorMessage = "Palun sisestage isikukood")]
-		[CorrectIdCode(ErrorMessage = "Isikukood ei vasta Eesti vabariigi seatud standardi järgi")]
+		[CorrectIdCode(ErrorMessage = "Isikukood ei vasta Eesti Vabariigi seatud standarditele")]
 		[Range(10000000000, 99999999999, ErrorMessage = "Eesti isikukood sisaldab 11 numbrit")]
 		public long? IdCode { get; set; }
 		
