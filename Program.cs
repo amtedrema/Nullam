@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Nullam.Data;
+using Nullam.Services;
+using Services;
 using System.Globalization;
 
 namespace Nullam
@@ -12,6 +14,8 @@ namespace Nullam
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
+            builder.Services.AddScoped<IParticipantService, ParticipantService>();
 
             builder.Services.AddDbContext<NullamDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("AppDatabase")));

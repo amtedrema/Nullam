@@ -21,6 +21,9 @@ namespace Nullam.Validators
 
 			int[] codeArray = value.Select(x => int.Parse(x.ToString())).ToArray();
 
+			if(codeArray.Length != 11)
+				return false;
+
 			var check = codeArray[10];
 			var total = 0;
 

@@ -1,206 +1,83 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using Nullam.Data;
-using Nullam.Models;
 using Nullam.ViewModels;
+using Services;
 
 namespace Nullam.Controllers
 {
-	public class ParticipantController : Controller
-	{
-		private readonly NullamDbContext _context;
-		public ParticipantController(NullamDbContext context)
-		{
-			_context = context;
-		}
+    public class ParticipantController : Controller
+    {
+        private readonly IParticipantService _participantService;
 
-		public IActionResult Update(Guid id)
-		{
-			var selectedList = _context.PaymentMethodType.Select(a =>
-								  new SelectListItem
-								  {
-									  Value = a.Id.ToString(),
-									  Text = a.LabelText
-								  }).ToList();
-
-			ViewBag.PaymentMethodTypeList = selectedList;
-
-			var participantVM = GetParticipantViewModel(id);
-
-			if (participantVM == null)
-			{
-                TempData["error"] = "Niisugust osalejat ei eksisteeri ühelgi üritusel";
-				return RedirectToAction("Index", "Event");
-            }
-			
-			if (TempData.ContainsKey("eventId"))
-				participantVM.EventId = TempData["eventId"]?.ToString();
-
-			return View(participantVM);
-		}
-
-		private ParticipantViewModel? GetParticipantViewModel(Guid id)
-		{
-			var person = _context.Person.FirstOrDefault(x => x.Id == id);
-			if (person != null)
-			{
-
-				return new ParticipantViewModel
-				{
-					IsCompany = false,
-					Person = new Person {
-						Id = person.Id,
-						FirstName = person.FirstName,
-						LastName = person.LastName,
-						IdCode = person.IdCode,
-						PaymentMethodTypeId = person.PaymentMethodTypeId,
-						Info = person.Info,
-					}
-				};
-			}
-
-			var company = _context.Company.FirstOrDefault(x => x.Id == id);
-			if (company != null)
-			{
-				return new ParticipantViewModel
-				{
-					IsCompany = true,
-					Company = new Company
-					{
-						Id = company.Id,
-						Name = company.Name,
-						RegistrationCode = company.RegistrationCode,
-						ParticipantAmount = company.ParticipantAmount,
-						PaymentMethodTypeId = company.PaymentMethodTypeId,
-						Info = company.Info,
-					},					
-				};
-			}
-
-            return null;
+        public ParticipantController(IParticipantService participantService)
+        {
+            _participantService = participantService;
         }
 
-		[HttpPost]
-		[ValidateAntiForgeryToken]
-		public IActionResult Update(ParticipantViewModel participantVM)
-		{
-			// Person FirstName and IdCode (2 validations) properties give InValid, because our participant is Company.
-			if (participantVM.IsCompany && ModelState.ErrorCount == 3)
-			{
-				var existingCompany = _context.Company.Where(x => x.Id == participantVM.Company.Id).First();
-				existingCompany.Name = participantVM.Company.Name;
-				existingCompany.RegistrationCode = participantVM.Company.RegistrationCode;
-				existingCompany.ParticipantAmount = participantVM.Company.ParticipantAmount;
-				existingCompany.PaymentMethodTypeId = participantVM.Company.PaymentMethodTypeId;
-				existingCompany.Info = participantVM.Company.Info;
+        public IActionResult Update(Guid id)
+        {
+            var selectedList = _participantService.GetPaymentMethodTypes();
+            ViewBag.PaymentMethodTypeList = selectedList;
 
-				_context.Company.Update(existingCompany); 
-				_context.SaveChanges();
-				TempData["success"] = "Osaleja info muutmine õnnestus edukalt";
+            var participantVM = _participantService.GetParticipantViewModel(id);
 
-				return RedirectToAction("Details", "Event", new { id = participantVM.EventId });
-			}
-			// Company Name, ParticipantAmount and RegistrationCode properties give InValid, because our participant is Person.
-			else if (!participantVM.IsCompany && ModelState.ErrorCount == 3)
-			{
-				var existingPerson = _context.Person.Where(x => x.Id == participantVM.Person.Id).First();
+            if (participantVM == null)
+            {
+                TempData["error"] = "Niisugust osalejat ei eksisteeri ühelgi üritusel";
+                return RedirectToAction("Index", "Event");
+            }
 
-				existingPerson.FirstName = participantVM.Person.FirstName;
-				existingPerson.LastName = participantVM.Person.LastName;
-				existingPerson.IdCode = participantVM.Person.IdCode;
-				existingPerson.PaymentMethodTypeId = participantVM.Person.PaymentMethodTypeId;
-				existingPerson.Info = participantVM.Person.Info;
+            if (TempData.ContainsKey("eventId"))
+                participantVM.EventId = TempData["eventId"]?.ToString();
 
-				_context.Person.Update(existingPerson);
-				_context.SaveChanges();
-				TempData["success"] = "Osaleja info muutmine õnnestus edukalt";
+            return View(participantVM);
+        }
 
-				return RedirectToAction("Details", "Event", new { id = participantVM.EventId });
-			}
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Update(ParticipantViewModel participantVM)
+        {
+            // When participant is a Company - FirstName and IdCode (2 times, Required and CorrectIdCodeAttribute) properties give InValid. Person is null.
+            // When participant is a Person  - Name, ParticipantAmount and RegistrationCode properties give InValid. Company is null.
+            if (ModelState.ErrorCount == 3)
+            {
+                _participantService.UpdateParticipant(participantVM);
 
-			var selectedList = _context.PaymentMethodType.Select(a =>
-								  new SelectListItem
-								  {
-									  Value = a.Id.ToString(),
-									  Text = a.LabelText
-								  }).ToList();
+                TempData["success"] = "Osaleja info muutmine õnnestus edukalt";
+                return RedirectToAction("Details", "Event", new { id = participantVM.EventId });
+            }
 
-			ViewBag.PaymentMethodTypeList = selectedList;
+            var selectedList = _participantService.GetPaymentMethodTypes();
+            ViewBag.PaymentMethodTypeList = selectedList;
 
-			return View(participantVM);
-		}
+            return View(participantVM);
+        }
 
-		[HttpPost]
-		public IActionResult NewParticipantForm(string modelJson)
-		{
-			var selectedList = _context.PaymentMethodType.Select(a =>
-							  new SelectListItem
-							  {
-								  Value = a.Id.ToString(),
-								  Text = a.LabelText
-							  }).ToList();
+        [HttpPost]
+        public IActionResult NewParticipantForm(string modelJson)
+        {
+            var selectedList = _participantService.GetPaymentMethodTypes();
+            ViewBag.PaymentMethodTypeList = selectedList;
 
-			ViewBag.PaymentMethodTypeList = selectedList;
+            var model = JsonConvert.DeserializeObject<ParticipantViewModel>(modelJson);
 
-			var model = JsonConvert.DeserializeObject<ParticipantViewModel>(modelJson);
+            if (model != null && model.IsCompany)
+                return PartialView("_CompanyForm", model);
 
-			if (model != null && model.IsCompany)
-				return PartialView("_CompanyForm", model);
+            return PartialView("_PersonForm", model);
+        }
 
-			return PartialView("_PersonForm", model);
-		}
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Delete(Guid id)
+        {
+            string? eventId = TempData.ContainsKey("eventId") ? TempData["eventId"]?.ToString() : null;
+            
+            _participantService.DeleteParticipant(id, eventId);
+                
+            TempData["success"] = "Osaleja on eemaldatud ürituselt";
 
-		[HttpPost]
-		[ValidateAntiForgeryToken]
-		public IActionResult Delete(Guid id)
-		{
-			string? eventId = null;
-			if (TempData.ContainsKey("eventId"))
-			{
-				eventId = TempData["eventId"]?.ToString();
-			}
-
-			var companyToDelete = _context.Company.Include(x => x.Events).FirstOrDefault(z => z.Id == id);
-
-			if (companyToDelete != null)
-			{
-				if(companyToDelete.Events?.Count == 1)
-				{
-					_context.Company.Remove(companyToDelete);
-				}
-				else
-				{
-					_context.Database.ExecuteSql($"DELETE FROM EventCompany WHERE EventId = {eventId} AND CompanyId = {companyToDelete.Id};");
-				}
-
-				_context.SaveChanges();
-				TempData["success"] = "Ettevõte '" + companyToDelete.Name + "' on eemaldatud ürituselt";
-				return RedirectToAction("Details", "Event", new { id = eventId });
-			}
-
-			var personToDelete = _context.Person.Include(x => x.Events).FirstOrDefault(z => z.Id == id);
-			if (personToDelete != null)
-			{
-				if (personToDelete.Events?.Count == 1)
-				{
-					_context.Person.Remove(personToDelete);
-				}
-				else
-				{
-					_context.Database.ExecuteSql($"DELETE FROM EventPerson WHERE EventId = {eventId} AND CompanyId = {personToDelete.Id};");
-				}
-
-				TempData["success"] = "Isik '" + personToDelete.FirstName + " " + personToDelete.LastName + "' on eemaldatud ürituselt";
-				_context.SaveChanges();
-			}
-			else
-			{
-				TempData["error"] = "Kustutamine ebaõnnestus";
-			}
-
-			return RedirectToAction("Details", "Event", new { id = eventId });
-		}
-	}
+            return RedirectToAction("Details", "Event", new { id = eventId });
+        }
+    }
 }
