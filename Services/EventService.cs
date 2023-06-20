@@ -112,6 +112,7 @@ namespace Nullam.Services
                     .Include(x => x.Events)
                     .First(x => x.Id == item.Id);
 
+                //If this company have only 1 event what you want to delete, then also delete the company
                 if (tempCompany.Events?.Count == 1)
                 {
                     _context.Company.Remove(tempCompany);
@@ -124,6 +125,7 @@ namespace Nullam.Services
                     .Include(x => x.Events)
                     .First(x => x.Id == item.Id);
 
+                //If this person have only 1 event what you want to delete, then also delete the person
                 if (tempPerson.Events?.Count == 1)
                 {
                     _context.Person.Remove(tempPerson);

@@ -12,7 +12,7 @@ namespace Nullam.Models
 		[Required(ErrorMessage = "Palun sisestage registrikood")]
 		public double? RegistrationCode { get; set; }
 
-		[StringLength(5000, ErrorMessage = "Lisainfo väli ei saa sisaldada rohkem kui 5000 tähte")]
+		[StringLength(5000, ErrorMessage = "Lisainfo väli ei saa sisaldada rohkem kui 5000 tähemärki")]
 		public string? Info { get; set; }
 	}
 }

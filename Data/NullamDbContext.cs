@@ -4,12 +4,13 @@ using Nullam.Models;
 namespace Nullam.Data;
 public class NullamDbContext : DbContext
 {
-    public DbSet<Event> Event { get; set; }
-    public DbSet<Company> Company { get; set; }
-	public DbSet<Person> Person { get; set; }
-    public DbSet<PaymentMethodType> PaymentMethodType { get; set; }
+    public virtual DbSet<Event> Event { get; set; }
+    public virtual DbSet<Company> Company { get; set; }
+	public virtual DbSet<Person> Person { get; set; }
+    public virtual DbSet<PaymentMethodType> PaymentMethodType { get; set; }
 
-	public NullamDbContext(DbContextOptions<NullamDbContext> options) : base(options) { }
+    public NullamDbContext() { }
+    public NullamDbContext(DbContextOptions<NullamDbContext> options) : base(options) { }
 
     protected override void OnModelCreating (ModelBuilder modelBuilder)
     {

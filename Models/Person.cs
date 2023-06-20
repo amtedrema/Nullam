@@ -14,7 +14,7 @@ namespace Nullam.Models
 		[Range(10000000000, 99999999999, ErrorMessage = "Eesti isikukood sisaldab 11 numbrit")]
 		public long? IdCode { get; set; }
 		
-		[StringLength(1500, ErrorMessage = "Lisainfo väli ei saa sisaldada rohkem kui 1500 tähte")]
+		[StringLength(1500, ErrorMessage = "Lisainfo väli ei saa sisaldada rohkem kui 1500 tähemärki")]
 		public string? Info { get; set; }
 	}
 }
