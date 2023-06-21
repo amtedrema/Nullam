@@ -39,6 +39,10 @@ namespace Nullam.Data
         /// <param name="options">The options for configuring the context</param>
         public NullamDbContext(DbContextOptions<NullamDbContext> options) : base(options) { }
 
+        /// <summary>
+        /// Configures the model that was discovered by convention from the entity types exposed in DbSet properties
+        /// </summary>
+        /// <param name="modelBuilder">The builder being used to construct the model for this context</param>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Person>()
