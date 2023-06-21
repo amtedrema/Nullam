@@ -6,15 +6,26 @@ using Nullam.ViewModels;
 
 namespace Nullam.Services
 {
+    /// <summary>
+    /// Represents a service for managing participants in events
+    /// </summary>
     public class ParticipantService : IParticipantService
     {
         private readonly NullamDbContext _context;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ParticipantService"/> class
+        /// </summary>
+        /// <param name="context">The database context</param>
         public ParticipantService(NullamDbContext context)
         {
             _context = context;
         }
 
+        /// <summary>
+        /// Retrieves a list of payment method types as <see cref="SelectListItem"/>
+        /// </summary>
+        /// <returns>A list of payment method types as <see cref="SelectListItem"/></returns>
         public List<SelectListItem> GetPaymentMethodTypes()
         {
             return _context.PaymentMethodType
@@ -26,6 +37,11 @@ namespace Nullam.Services
                 .ToList();
         }
 
+        /// <summary>
+        /// Retrieves a viewmodel for a participant with the specified identifier
+        /// </summary>
+        /// <param name="id">The identifier of the participant.</param>
+        /// <returns>An instance of the <see cref="ParticipantViewModel"/> class, or null if the participant does not exist</returns>
         public ParticipantViewModel? GetParticipantViewModel(Guid id)
         {
             var person = _context.Person
@@ -71,6 +87,11 @@ namespace Nullam.Services
             return null;
         }
 
+        /// <summary>
+        /// Creates a new participant in the specified event
+        /// </summary>
+        /// <param name="participantVM">The participant view model containing the participant details</param>
+        /// <returns>True if the participant was successfully created, otherwise false</returns>
         public bool CreateParticipant(ParticipantViewModel participantVM)
         {
             //eventMap is for mapping the person with an event
@@ -169,6 +190,10 @@ namespace Nullam.Services
             }
         }
 
+        /// <summary>
+        /// Updates the details of an existing participant
+        /// </summary>
+        /// <param name="participantVM">The participant view model containing the updated participant details</param>
         public void UpdateParticipant(ParticipantViewModel participantVM)
         {
             if (participantVM.IsCompany)
@@ -201,6 +226,11 @@ namespace Nullam.Services
             _context.SaveChanges();
         }
 
+        /// <summary>
+        /// Deletes a participant from the specified event
+        /// </summary>
+        /// <param name="id">The identifier of the participant to delete</param>
+        /// <param name="eventId">The identifier of the event</param>
         public void DeleteParticipant(Guid id, string? eventId)
         {
             var companyToDelete = _context.Company

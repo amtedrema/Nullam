@@ -5,15 +5,27 @@ using Nullam.ViewModels;
 
 namespace Nullam.Controllers
 {
+    /// <summary>
+    /// Controller for managing participants
+    /// </summary>
     public class ParticipantController : Controller
     {
         private readonly IParticipantService _participantService;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ParticipantController"/> class
+        /// </summary>
+        /// <param name="participantService">The participant service</param>
         public ParticipantController(IParticipantService participantService)
         {
             _participantService = participantService;
         }
 
+        /// <summary>
+        /// Displays the update participant form
+        /// </summary>
+        /// <param name="id">The ID of the participant</param>
+        /// <returns>The view for updating a participant</returns>
         public IActionResult Update(Guid id)
         {
             var selectedList = _participantService.GetPaymentMethodTypes();
@@ -33,6 +45,11 @@ namespace Nullam.Controllers
             return View(participantVM);
         }
 
+        /// <summary>
+        /// Updates a participant
+        /// </summary>
+        /// <param name="participantVM">The participant viewmodel</param>
+        /// <returns>Updated participant</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Update(ParticipantViewModel participantVM)
@@ -53,6 +70,11 @@ namespace Nullam.Controllers
             return View(participantVM);
         }
 
+        /// <summary>
+        /// Retrieves the new participant form
+        /// </summary>
+        /// <param name="modelJson">The serialized model JSON</param>
+        /// <returns>The partial view for the new participant form</returns>
         [HttpPost]
         public IActionResult NewParticipantForm(string modelJson)
         {
@@ -67,6 +89,11 @@ namespace Nullam.Controllers
             return PartialView("_PersonForm", model);
         }
 
+        /// <summary>
+        /// Deletes a participant
+        /// </summary>
+        /// <param name="id">The ID of the participant to delete</param>
+        /// <returns>Deletion of the participant</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Delete(Guid id)

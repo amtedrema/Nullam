@@ -2,9 +2,17 @@
 
 namespace Nullam.Validators
 {
-	public class FutureDateAttribute : ValidationAttribute
+    /// <summary>
+    /// Validates that a date is in the future
+    /// </summary>
+    public class FutureDateAttribute : ValidationAttribute
 	{
-		public override bool IsValid(object? value)
+        /// <summary>
+        /// Determines whether the specified value is a future date
+        /// </summary>
+        /// <param name="value">The value to validate</param>
+        /// <returns>True if the value is a future date; otherwise, false</returns>
+        public override bool IsValid(object? value)
 		{
 			return value != null && (DateTime)value > DateTime.Now;
 		}

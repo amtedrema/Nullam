@@ -5,15 +5,26 @@ using Nullam.ViewModels;
 
 namespace Nullam.Services
 {
+    /// <summary>
+    /// Provides methods to interact with events in the application
+    /// </summary>
     public class EventService : IEventService
     {
         private readonly NullamDbContext _context;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EventService"/> class with the specified database context
+        /// </summary>
+        /// <param name="context">The database context</param>
         public EventService(NullamDbContext context)
         {
             _context = context;
         }
 
+        /// <summary>
+        /// Retrieves a viewmodel containing events grouped by date
+        /// </summary>
+        /// <returns>An instance of the <see cref="EventsByDateViewModel"/> class</returns>
         public EventsByDateViewModel GetEventsByDate()
         {
             var events = _context.Event.ToList();
@@ -29,6 +40,12 @@ namespace Nullam.Services
             return viewModel;
         }
 
+        /// <summary>
+        /// Retrieves detailed information about an event
+        /// </summary>
+        /// <param name="id">The identifier of the event</param>
+        /// <param name="participant">An optional participant viewmodel</param>
+        /// <returns>An instance of the <see cref="EventDetailViewModel"/> class, or null if the event does not exist</returns>
         public EventDetailViewModel? GetEventDetails(string id, ParticipantViewModel? participant = null)
         {
             var eve = _context.Event
@@ -87,6 +104,10 @@ namespace Nullam.Services
             return viewModel;
         }
 
+        /// <summary>
+        /// Creates a new event
+        /// </summary>
+        /// <param name="obj">The event object to create</param>
         public void CreateEvent(Event obj)
         {
             if (obj != null)
@@ -96,6 +117,11 @@ namespace Nullam.Services
             }
         }
 
+        /// <summary>
+        /// Deletes an event with the specified identifier
+        /// </summary>
+        /// <param name="id">The identifier of the event to delete</param>
+        /// <returns>True if the event was successfully deleted, otherwise false</returns>
         public bool DeleteEvent(Guid id)
         {
             var eventToDelete = _context.Event

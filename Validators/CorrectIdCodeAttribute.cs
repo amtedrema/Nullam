@@ -3,9 +3,17 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Nullam.Validators
 {
-	public class CorrectIdCodeAttribute : ValidationAttribute
+    /// <summary>
+    /// Validates the correctness of an identification code (ID code)
+    /// </summary>
+    public class CorrectIdCodeAttribute : ValidationAttribute
 	{
-		public override bool IsValid(object? value)
+        /// <summary>
+        /// Determines whether the specified value is a valid ID code
+        /// </summary>
+        /// <param name="value">The value to validate</param>
+        /// <returns>True if the value is a valid ID code; otherwise, false</returns>
+        public override bool IsValid(object? value)
 		{
 			if (value == null)
 				return false;
